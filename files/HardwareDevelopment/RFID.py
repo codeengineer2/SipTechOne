@@ -1,66 +1,34 @@
 import serial
 import time
-def test_port(port):
-    try:
-        ser = serial.Serial(port, baudrate=9600, timeout=1)
-        if ser.is_open:
-            print(f"Erfolgreich verbunden mit {port}")
-        ser.close()
-    except Exception as e:
-        print(f"Fehler bei {port}: {e}")
 
-# Teste mögliche Ports
-ports = ["/dev/serial0", "/dev/ttyS0", "/dev/ttyAMA0"]
-
-for port in ports:
-    test_port(port)
-# Serielle Verbindung öffnen
-# Prüfe, ob dein Modul /dev/ttyS0 oder /dev/ttyAMA0 verwendet
-ser = serial.Serial('/dev/ttyS0', baudrate=9600, timeout=1)
+# Öffne den UART-Port (prüfe, ob /dev/serial0, /dev/ttyS0 oder /dev/ttyAMA0 verwendet wird)
+ser = serial.Serial('/dev/serial0', baudrate=115200, timeout=1)
 
 
-def wakeup():
-    # Wake-up Sequence für PN532 (abhängig vom Modul)
-    ser.write(b'\x55\x55\x00\x00\x00\x00')  # Testbefehl, je nach Modul
-    time.sleep(0.5)
+# Senden von Daten über UART
+def send_data(data):
+    ser.write(data.encode('utf-8'))
+    print(f"Gesendet: {data}")
 
 
-def send_command(command):
-    preamble = b'\x00\x00\xFF'  # Preamble für PN532
-    length = bytes([len(command)])
-    lcs = bytes([~len(command) & 0xFF])  # Length Checksum
-    data = command
-    dcs = bytes([~sum(command) & 0xFF])  # Data Checksum
-    postamble = b'\x00'
-
-    frame = preamble + length + lcs + data + dcs + postamble
-    ser.write(frame)
+# Empfangen von Daten über UART
+def receive_data():
+    if ser.in_waiting > 0:  # Prüfen, ob Daten im Puffer sind
+        incoming_data = ser.read(ser.in_waiting).decode('utf-8', errors='ignore')
+        print(f"Empfangen: {incoming_data}")
 
 
-def read_response():
-    response = ser.read(64)  # Lese bis zu 64 Bytes
-    if response:
-        print("Antwort:", response.hex())
-    else:
-        print("Keine Antwort vom PN532.")
+try:
+    while True:
+        # Sende eine Nachricht alle 5 Sekunden
+        send_data("Hallo PN532!\n")
+        time.sleep(1)
 
+        # Empfange und zeige eingehende Daten
+        receive_data()
+        time.sleep(1)
 
-def read_card():
-    # Befehl zum Lesen einer NFC-Karte (InListPassiveTarget)
-    command = b'\xD4\x4A\x01\x00'
-    send_command(command)
-    time.sleep(1)
-    read_response()
-
-
-if __name__ == "__main__":
-    try:
-        wakeup()
-        print("Warte auf eine NFC-Karte...")
-        while True:
-            read_card()
-            time.sleep(2)
-    except KeyboardInterrupt:
-        print("Programm beendet.")
-    finally:
-        ser.close()
+except KeyboardInterrupt:
+    print("\nProgramm beendet.")
+finally:
+    ser.close()
