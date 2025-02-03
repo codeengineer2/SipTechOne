@@ -1,34 +1,29 @@
-import serial
 import time
+import board
+import busio
+from adafruit_pn532.uart import PN532_UART
 
-# Öffne den UART-Port (prüfe, ob /dev/serial0, /dev/ttyS0 oder /dev/ttyAMA0 verwendet wird)
-ser = serial.Serial('/dev/serial0', baudrate=115200, timeout=1)
+# Initialisierung der UART-Schnittstelle
+uart = busio.UART(board.TX, board.RX, baudrate=115200, timeout=1)
 
+# PN532 über UART initialisieren
+nfc = PN532_UART(uart, debug=False)
 
-# Senden von Daten über UART
-def send_data(data):
-    ser.write(data.encode('utf-8'))
-    print(f"Gesendet: {data}")
+# Firmware-Version auslesen, um sicherzustellen, dass das Modul erkannt wird
+ic, ver, rev, support = nfc.firmware_version
+print(f'Gefunden PN532 mit Firmware Version: {ver}.{rev}')
 
+# NFC-Leser konfigurieren
+nfc.SAM_configuration()
 
-# Empfangen von Daten über UART
-def receive_data():
-    if ser.in_waiting > 0:  # Prüfen, ob Daten im Puffer sind
-        incoming_data = ser.read(ser.in_waiting).decode('utf-8', errors='ignore')
-        print(f"Empfangen: {incoming_data}")
+print('Warte auf eine NFC-Karte...')
 
+while True:
+    uid = nfc.read_passive_target(timeout=0.5)
 
-try:
-    while True:
-        # Sende eine Nachricht alle 5 Sekunden
-        send_data("Hallo PN532!\n")
-        time.sleep(1)
+    if uid is None:
+        continue  # Kein Tag erkannt, weiter suchen
 
-        # Empfange und zeige eingehende Daten
-        receive_data()
-        time.sleep(1)
-
-except KeyboardInterrupt:
-    print("\nProgramm beendet.")
-finally:
-    ser.close()
+    # UID der Karte anzeigen
+    print('Karte erkannt! UID:', ' '.join([hex(i) for i in uid]))
+    time.sleep(1)
