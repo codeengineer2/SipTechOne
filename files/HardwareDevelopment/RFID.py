@@ -16,7 +16,7 @@ for port in ports:
     test_port(port)
 # Serielle Verbindung öffnen
 # Prüfe, ob dein Modul /dev/ttyS0 oder /dev/ttyAMA0 verwendet
-ser = serial.Serial('/dev/ttyS0', baudrate=115200, timeout=1)
+ser = serial.Serial('/dev/serial0', baudrate=115200, timeout=1)
 
 
 def wakeup():
