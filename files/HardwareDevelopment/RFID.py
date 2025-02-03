@@ -1,6 +1,19 @@
 import serial
 import time
+def test_port(port):
+    try:
+        ser = serial.Serial(port, baudrate=115200, timeout=1)
+        if ser.is_open:
+            print(f"Erfolgreich verbunden mit {port}")
+        ser.close()
+    except Exception as e:
+        print(f"Fehler bei {port}: {e}")
 
+# Teste mögliche Ports
+ports = ["/dev/serial0", "/dev/ttyS0", "/dev/ttyAMA0"]
+
+for port in ports:
+    test_port(port)
 # Serielle Verbindung öffnen
 # Prüfe, ob dein Modul /dev/ttyS0 oder /dev/ttyAMA0 verwendet
 ser = serial.Serial('/dev/ttyS0', baudrate=115200, timeout=1)
