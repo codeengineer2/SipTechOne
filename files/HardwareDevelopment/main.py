@@ -1,19 +1,17 @@
-import RPi.GPIO as GPIO
-import time
+from gpiozero import OutputDevice
+from time import sleep
 
-# GPIO-Nummerierung nach Broadcom-Layout verwenden (BCM)
-GPIO.setmode(GPIO.BCM)
+# Definiere den Pin, der mit IN1 des Relais verbunden ist
+# BCM-Pin-Nummerierung: Pin 22 entspricht GPIO 22
+relay = OutputDevice(22, active_high=True, initial_value=False)
 
-GPIO.setup(27, GPIO.OUT)
-GPIO.setup(22, GPIO.OUT)
+while True:
+    # Pumpe einschalten
+    relay.on()  # Relais schließt, Pumpe läuft
+    print("Pumpe AN")
+    sleep(5)    # 5 Sekunden warten
 
-
-
-GPIO.output(27, GPIO.HIGH)
-GPIO.output(22, GPIO.HIGH)
-time.sleep(10)
-GPIO.output(22, GPIO.LOW)
-GPIO.output(27, GPIO.LOW)
-time.sleep(10)
-# Aufräumen, um die Pins wieder freizugeben
-GPIO.cleanup()
+    # Pumpe ausschalten
+    relay.off()  # Relais öffnet, Pumpe aus
+    print("Pumpe AUS")
+    sleep(5)    # 5 Sekunden warten
