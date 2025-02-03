@@ -3,7 +3,7 @@ import board
 import busio
 from adafruit_pn532.uart import PN532_UART
 
-# Initialisierung der UART-Schnittstelle
+#Initialisierung der UART-Schnittstelle
 uart = busio.UART(board.TX, board.RX, baudrate=115200, timeout=1)
 
 # PN532 über UART initialisieren
