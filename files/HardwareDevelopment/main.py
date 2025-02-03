@@ -13,7 +13,7 @@ GPIO.output(27, GPIO.HIGH)
 GPIO.output(22, GPIO.HIGH)
 time.sleep(10)
 GPIO.output(22, GPIO.LOW)
-GPIO.output(22, GPIO.LOW)
+GPIO.output(27, GPIO.LOW)
 time.sleep(10)
 # Aufräumen, um die Pins wieder freizugeben
 GPIO.cleanup()
