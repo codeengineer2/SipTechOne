@@ -1,29 +1,29 @@
 import time
 import board
 import busio
-from adafruit_pn532.i2c import PN532_I2C
+from adafruit_pn532.uart import PN532_UART
 
-# I2C-Schnittstelle initialisieren
-i2c = busio.I2C(board.SCL, board.SDA)
+# Initialisierung der UART-Schnittstelle
+uart = busio.UART(board.TX, board.RX, baudrate=115200, timeout=1)
 
-# PN532 initialisieren
-pn532 = PN532_I2C(i2c, debug=False)
+# PN532 über UART initialisieren
+nfc = PN532_UART(uart, debug=False)
 
 # Firmware-Version auslesen
-ic, ver, rev, support = pn532.firmware_version
+ic, ver, rev, support = nfc.firmware_version
 print(f'Gefunden PN532 mit Firmware Version: {ver}.{rev}')
 
-# NFC-Leser konfigurieren
-pn532.SAM_configuration()
+# NFC-Reader konfigurieren
+nfc.SAM_configuration()
 
 print('Warte auf eine NFC-Karte...')
 
 while True:
-    uid = pn532.read_passive_target(timeout=0.5)
+    uid = nfc.read_passive_target(timeout=0.5)
 
     if uid is None:
-        continue  # Kein Tag gefunden, weiter suchen
+        continue  # Kein Tag erkannt, weitersuchen
 
-    # UID der Karte ausgeben
+    # UID der Karte anzeigen
     print('Karte erkannt! UID:', ' '.join([hex(i) for i in uid]))
     time.sleep(1)
