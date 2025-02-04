@@ -1,0 +1,32 @@
+{
+  "drinks": {
+    "Cola": {
+      "pumps": [
+        {
+          "pin": 23,
+          "duration": 10
+        }
+      ]
+    },
+    "Fanta": {
+      "pumps": [
+        {
+          "pin": 24,
+          "duration": 5
+        }
+      ]
+    },
+    "Mezzo": {
+      "pumps": [
+        {
+          "pin": 23,
+          "duration": 5
+        },
+        {
+          "pin": 24,
+          "duration": 5
+        }
+      ]
+    }
+  }
+}

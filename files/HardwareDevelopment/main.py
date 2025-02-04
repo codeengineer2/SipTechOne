@@ -1,19 +1,38 @@
+import json
 from gpiozero import OutputDevice
 from time import sleep
 
-# Definiere den Pin, der mit IN1 des Relais verbunden ist
-# BCM-Pin-Nummerierung: Pin 22 entspricht GPIO 22
-def run(parameter):
-    relay = OutputDevice(22, active_high=True, initial_value=False)
-    if parameter == "Cola":
-        print("Cola run")
-    while True:
-        # Pumpe einschalten
-        relay.on()  # Relais schließt, Pumpe läuft
-        print("Pumpe AN")
-        sleep(5)    # 5 Sekunden warten
+with open("drinks_config.json", "r") as file:
+    config = json.load(file)
 
-        # Pumpe ausschalten
-        relay.off()  # Relais öffnet, Pumpe aus
-        print("Pumpe AUS")
-        sleep(5)    # 5 Sekunden warten
+drinks = config["drinks"]
+
+
+def run_drink(drink_name):
+    drink = drinks[drink_name]
+    pumps = drink["pumps"]
+
+    if len(pumps) == 1:
+        pump = OutputDevice(pumps[0]["pin"], active_high=True, initial_value=False)
+        pump.on()
+        print(f"Pumpe an Pin {pumps[0]['pin']} startet für {pumps[0]['duration']} Sekunden.")
+        sleep(pumps[0]["duration"])
+        pump.off()
+        print(f"Pumpe an Pin {pumps[0]['pin']} stoppt.")
+    elif len(pumps) == 2:
+        pump1 = OutputDevice(pumps[0]["pin"], active_high=True, initial_value=False)
+        pump2 = OutputDevice(pumps[1]["pin"], active_high=True, initial_value=False)
+
+        pump1.on()
+        print(f"Pumpe an Pin {pumps[0]['pin']} startet.")
+        pump2.on()
+        print(f"Pumpe an Pin {pumps[1]['pin']} startet.")
+
+        sleep(pumps[0]["duration"])
+
+        pump1.off()
+        print(f"Pumpe an Pin {pumps[0]['pin']} stoppt.")
+        pump2.off()
+        print(f"Pumpe an Pin {pumps[1]['pin']} stoppt.")
+
+
