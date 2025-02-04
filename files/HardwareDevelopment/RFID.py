@@ -1,3 +1,3 @@
 import main
 
-main.run()
+main.run("Cola")
