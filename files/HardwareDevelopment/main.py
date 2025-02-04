@@ -3,15 +3,17 @@ from time import sleep
 
 # Definiere den Pin, der mit IN1 des Relais verbunden ist
 # BCM-Pin-Nummerierung: Pin 22 entspricht GPIO 22
-relay = OutputDevice(22, active_high=True, initial_value=False)
 
-while True:
-    # Pumpe einschalten
-    relay.on()  # Relais schließt, Pumpe läuft
-    print("Pumpe AN")
-    sleep(5)    # 5 Sekunden warten
+def run():
+    relay = OutputDevice(22, active_high=True, initial_value=False)
 
-    # Pumpe ausschalten
-    relay.off()  # Relais öffnet, Pumpe aus
-    print("Pumpe AUS")
-    sleep(5)    # 5 Sekunden warten
+    while True:
+        # Pumpe einschalten
+        relay.on()  # Relais schließt, Pumpe läuft
+        print("Pumpe AN")
+        sleep(5)    # 5 Sekunden warten
+
+        # Pumpe ausschalten
+        relay.off()  # Relais öffnet, Pumpe aus
+        print("Pumpe AUS")
+        sleep(5)    # 5 Sekunden warten
