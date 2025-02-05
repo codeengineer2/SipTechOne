@@ -2,16 +2,16 @@ from gpiozero import OutputDevice
 from time import sleep
 
 
-
+relay1 = OutputDevice(23, active_high=True, initial_value=False)
+relay2 = OutputDevice(24, active_high=True, initial_value=False)
 
 
 
 
 def run(parameter):
-    zeiteinzeln = 50
-    zeitgesamt = 25
-    relay1 = OutputDevice(23, active_high=True, initial_value=False)
-    relay2 = OutputDevice(24, active_high=True, initial_value=False)
+    zeiteinzeln = 67
+    zeitgesamt = 33
+
     if parameter == "Cola":
         relay1.on()
         print("Cola läuft")
@@ -32,3 +32,4 @@ def run(parameter):
         relay1.off()
         relay2.off()
         print("Mezzo stoppt - beide beendet")
+
