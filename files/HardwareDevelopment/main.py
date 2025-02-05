@@ -1,36 +1,37 @@
-import json
 from gpiozero import OutputDevice
 from time import sleep
 
-with open("drinkstime.json", "r") as file:
-    config = json.load(file)
 
-drinks = config["drinks"]
+relay1 = OutputDevice(23, active_high=True, initial_value=False)
+relay2 = OutputDevice(24, active_high=True, initial_value=False)
+relay1.off()
+relay2.off()
 
 
-def run_drink(drink_name):
-    drink = drinks[drink_name]
-    pumps = drink["pumps"]
 
-    if len(pumps) == 1:
-        pump = OutputDevice(pumps[0]["pin"], active_high=True, initial_value=False)
-        pump.on()
-        print(f"Pumpe an Pin {pumps[0]['pin']} startet für {pumps[0]['duration']} Sekunden.")
-        sleep(pumps[0]["duration"])
-        pump.off()
-        print(f"Pumpe an Pin {pumps[0]['pin']} stoppt.")
-    elif len(pumps) == 2:
-        pump1 = OutputDevice(pumps[0]["pin"], active_high=True, initial_value=False)
-        pump2 = OutputDevice(pumps[1]["pin"], active_high=True, initial_value=False)
+def run(parameter):
+    zeiteinzeln = 65
+    zeitgesamt = 33
 
-        pump1.on()
-        print(f"Pumpe an Pin {pumps[0]['pin']} startet.")
-        pump2.on()
-        print(f"Pumpe an Pin {pumps[1]['pin']} startet.")
+    if parameter == "Cola":
+        relay1.on()
+        print("Cola läuft")
+        sleep(zeiteinzeln)
+        relay1.off()
+        print("Cola stoppt")
+    elif parameter == "Fanta":
+        relay2.on()
+        print("Fanta läuft")
+        sleep(zeiteinzeln)
+        relay2.off()
+        print("Fanta stoppt")
+    elif parameter == "Spezi":
+        relay1.on()
+        relay2.on()
+        print("Spezi läuft - Beide Relays an")
+        sleep(zeitgesamt)
+        relay1.off()
+        relay2.off()
+        print("Spezi stoppt - beide beendet")
 
-        sleep(pumps[0]["duration"])
 
-        pump1.off()
-        print(f"Pumpe an Pin {pumps[0]['pin']} stoppt.")
-        pump2.off()
-        print(f"Pumpe an Pin {pumps[1]['pin']} stoppt.")

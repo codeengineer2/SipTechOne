@@ -1,8 +1,7 @@
 import customtkinter as ctk
 from tkinter import ttk
 from PIL import Image, ImageTk
-import subprocess
-import os
+import HardwareDevelopment.test as HDT
 
 class Beverage:
     def __init__(self, name, info_text, ingredients, image_path=None):
@@ -55,7 +54,7 @@ def on_button_click():
         "davon Zucker": "10,6 g",
         "Eiweiß": "0 g",
         "Salz": "0 g",
-    }, image_path="drinks/cola.png")
+    }, image_path="Interface/drinks/cola.png")
     beverage2 = Beverage("Fanta / 50ml", "A tangy orange soda", {
         "Kalorien": "42 kcal",
         "Energie": "178 kJ",
@@ -65,7 +64,7 @@ def on_button_click():
         "davon Zucker": "10,3 g",
         "Eiweiß": "0 g",
         "Natrium": "0 g",
-    }, image_path="drinks/fanta.png")
+    }, image_path="Interface/drinks/fanta.png")
     beverages = [beverage1, beverage2]
     for i, beverage in enumerate(beverages):
         object_frame = ctk.CTkFrame(frame)
@@ -173,9 +172,10 @@ def mix_button_clicked(beverages):
         result_tuple = tuple(selected_names)
         print(f"Resultat-Tuple: {result_tuple}")
         
-        os.chdir(os.path.join(os.getcwd(), '..', 'HardwareDevelopment'))
-        result = subprocess.run(['python', 'test.py', ','.join(result_tuple)], capture_output=True, text=True)
-
+        HDT.run(str(result_tuple[0]))
+            
+        print(result_tuple)
+        
         print(f"Rückgabewert: {result.returncode}")
         print(f"Standardoutput: {result.stdout}")
         print(f"Fehlerausgabe: {result.stderr}")
