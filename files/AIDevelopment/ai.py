@@ -32,7 +32,8 @@ def detect_blue():
                 if timer_start is None:
                     timer_start = time.time()
                 elif time.time() - timer_start >= 3:
-                    
+                    print("end")
+                    return 1;
                     timer_start = None
         else:
             timer_start = None
@@ -40,5 +41,3 @@ def detect_blue():
             break
     cap.release()
     cv2.destroyAllWindows()
-
-detect_blue() 

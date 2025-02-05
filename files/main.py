@@ -1,7 +1,8 @@
 import customtkinter as ctk
 from tkinter import ttk
 from PIL import Image, ImageTk
-import HardwareDevelopment.test as HDT
+import HardwareDevelopment.main as HDT
+import AIDevelopment.ai as AID
 
 class Beverage:
     def __init__(self, name, info_text, ingredients, image_path=None):
@@ -172,7 +173,10 @@ def mix_button_clicked(beverages):
         result_tuple = tuple(selected_names)
         print(f"Resultat-Tuple: {result_tuple}")
         
-        HDT.run(str(result_tuple[0]))
+        value = AID.detect_blue()
+        if(value == 1):
+            print('Yeah')
+            HDT.run(str(result_tuple[0]))
             
         print(result_tuple)
         
