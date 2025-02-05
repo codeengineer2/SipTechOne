@@ -1,8 +1,10 @@
 import customtkinter as ctk
 from tkinter import ttk
 from PIL import Image, ImageTk
-import subprocess
+import sys
 import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '../HardwareDevelopment'))
+import test
 
 class Beverage:
     def __init__(self, name, info_text, ingredients, image_path=None):
@@ -16,7 +18,7 @@ class Beverage:
     def load_image(self, image_path):
         try:
             img = Image.open(image_path)
-            img = img.resize((200, 200))
+            img = img.resize((250, 250))
             return ImageTk.PhotoImage(img)
         except Exception as e:
             print(f"Bild konnte nicht geladen werden: {e}")
@@ -43,9 +45,9 @@ def on_button_click():
     for widget in root.winfo_children():
         widget.destroy()
     beverages_label = ctk.CTkLabel(root, text="Getränke", font=("Arial", 40))
-    beverages_label.place(relx=0.5, rely=0.05, anchor="n")
+    beverages_label.place(relx=0.5, rely=0.02, anchor="n")
     frame = ctk.CTkFrame(root)
-    frame.place(relx=0.5, rely=0.18, anchor="n")
+    frame.place(relx=0.5, rely=0.12, anchor="n")
     beverage1 = Beverage("Cola / 50ml", "A classic cola drink", {
         "Kalorien": "42 kcal",
         "Energie": "180 kJ",
@@ -96,7 +98,7 @@ def on_button_click():
 
     mix_button = ctk.CTkButton(root, text="Mischen", font=("Arial", 18), width=180, height=60,
                                command=lambda: mix_button_clicked(beverages), fg_color="#6A0DAD", hover_color="#620A80")
-    mix_button.place(relx=0.5, rely=0.91, anchor="center")
+    mix_button.place(relx=0.5, rely=0.92, anchor="center")
 
 def grid_element_clicked(beverage, object_frame):
     HIGHLIGHT_COLOR = "#3e3e3e"
@@ -123,12 +125,12 @@ def info_button_clicked(beverage):
 
     treeview = ttk.Treeview(table_frame, columns=("Inhaltsstoff", "Menge (pro 100ml)"), show="headings")
     treeview.heading("Inhaltsstoff", text="Inhaltsstoff")
-    treeview.heading("Menge (pro 100ml)", text="Menge (pro 100ml)"))
+    treeview.heading("Menge (pro 100ml)", text="Menge (pro 100ml)")
 
     for i, (ingredient, value) in enumerate(beverage.ingredients.items()):
         treeview.insert("", "end", values=(ingredient, value))
     
-    treeview.tag_configure("font", font=("Arial", 14))
+    treeview.tag_configure("font", font=("Arial", 18))
     treeview.pack(fill="both", expand=True)
 
     close_button = ctk.CTkButton(info_window, text="Schließen", font=("Arial", 16),
@@ -151,32 +153,31 @@ def mix_button_clicked(beverages):
     global error_label
     selected_beverages = [beverage for beverage in beverages if beverage.checked]
     selected_count = len(selected_beverages)
+    
     if error_label:
         error_label.destroy()
     if selected_count == 0:
         error_label = ctk.CTkLabel(root, text="Es muss mindestens 1 Getränk ausgewählt werden!",
                                    font=("Arial", 18), text_color="#FF0000",  
                                    fg_color="#555555", corner_radius=10)
-        error_label.place(relx=0.5, rely=0.78, anchor="n")
+        error_label.place(relx=0.5, rely=0.82, anchor="n")
     elif selected_count > 2:
         error_label = ctk.CTkLabel(root, text="Es können nicht mehr als 2 Getränke ausgewählt werden!",
                                    font=("Arial", 18), text_color="#FF0000",  
                                    fg_color="#555555", corner_radius=10)
-        error_label.place(relx=0.5, rely=1, anchor="n")
-
+        error_label.place(relx=0.5, rely=0.98, anchor="n")
     else:
-        selected_names = [beverage.name.split(" /")[0] for beverage in selected_beverages]
+        selected_names = [beverage.name.split(" /")[0] for beverage in selected_beverages]  # Entfernt "/ml"
         print(f"Ausgewählte Getränke: {selected_names}")
         
         result_tuple = tuple(selected_names)
         print(f"Resultat-Tuple: {result_tuple}")
         
-        os.chdir(os.path.join(os.getcwd(), '..', 'HardwareDevelopment'))
-        result = subprocess.run(['python', 'main.py', ','.join(result_tuple)], capture_output=True, text=True)
-
-        print(f"Rückgabewert: {result.returncode}")
-        print(f"Standardoutput: {result.stdout}")
-        print(f"Fehlerausgabe: {result.stderr}")
+        if len(result_tuple) == 2:
+            test.run("Spezi")
+        else:
+            test.run(result_tuple)
+        
 
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("blue")
