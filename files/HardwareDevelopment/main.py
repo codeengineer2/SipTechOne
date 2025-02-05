@@ -2,7 +2,7 @@ import json
 from gpiozero import OutputDevice
 from time import sleep
 
-with open("drinks_config.json", "r") as file:
+with open("drinkstime.json", "r") as file:
     config = json.load(file)
 
 drinks = config["drinks"]
