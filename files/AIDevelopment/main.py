@@ -1,56 +1,59 @@
 import cv2
-import mediapipe as mp
+import numpy as np
+import time
 
-mp_hands = mp.solutions.hands
-hands = mp_hands.Hands(static_image_mode=False, max_num_hands=2, min_detection_confidence=0.5)
-
-cap = cv2.VideoCapture(0)
-
-finger_connections = [
-    # Daumen: 1->2, 2->3, 3->4
-    (1, 2), (2, 3), (3, 4),
-    # Zeigefinger: 5->6, 6->7, 7->8
-    (5, 6), (6, 7), (7, 8),
-    # Mittelfinger: 9->10, 10->11, 11->12
-    (9, 10), (10, 11), (11, 12),
-    # Ringfinger: 13->14, 14->15, 15->16
-    (13, 14), (14, 15), (15, 16),
-    # Kleiner Finger: 17->18, 18->19, 19->20
-    (17, 18), (18, 19), (19, 20)
-]
-
-finger_landmark_indices = set()
-for connection in finger_connections:
-    finger_landmark_indices.update(connection)
-
-while cap.isOpened():
-    ret, frame = cap.read()
-    if not ret:
-        break
+def detect_blue():
+    cap = cv2.VideoCapture(0)
+    motion_end_time = None
+    blue_detected = False
     
-    frame = cv2.flip(frame, 1)
-    rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    results = hands.process(rgb_frame)
+    ret, prev_frame = cap.read()
+    prev_gray = cv2.cvtColor(prev_frame, cv2.COLOR_BGR2GRAY)
     
-    if results.multi_hand_landmarks:
-        for hand_landmarks in results.multi_hand_landmarks:
-            h, w, _ = frame.shape
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            break
+        
+        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        
+        diff = cv2.absdiff(prev_gray, gray)
+        motion_detected = np.sum(diff > 25) > 5000
+        prev_gray = gray
+        
+        lower_blue = np.array([85, 50, 50])
+        upper_blue = np.array([105, 255, 255])
+        
+        mask = cv2.inRange(hsv, lower_blue, upper_blue)
+        blue_percentage = (np.sum(mask > 0) / (frame.shape[0] * frame.shape[1])) * 100
+        
+        cv2.putText(frame, f'Blau: {blue_percentage:.2f}%', (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+        cv2.imshow('Frame', frame)
+        cv2.imshow('Maske', mask)
+        
+        if blue_percentage >= 40:
+            if not blue_detected:
+                print("Erkannt!")
+                blue_detected = True
             
-            for connection in finger_connections:
-                start = hand_landmarks.landmark[connection[0]]
-                end = hand_landmarks.landmark[connection[1]]
-                start_point = (int(start.x * w), int(start.y * h))
-                end_point = (int(end.x * w), int(end.y * h))
-                cv2.line(frame, start_point, end_point, (0, 255, 0), 2)
-            
-            for idx in finger_landmark_indices:
-                lm = hand_landmarks.landmark[idx]
-                center = (int(lm.x * w), int(lm.y * h))
-                cv2.circle(frame, center, 5, (0, 0, 255), -1)
+            if motion_detected:
+                motion_end_time = None
+            else:
+                if motion_end_time is None:
+                    motion_end_time = time.time() + 3
+                elif time.time() > motion_end_time:
+                    print("Jetzt! (Mehr als 40% und keine Bewegung für 3 Sekunden)")
+                    blue_detected = False
+                    motion_end_time = None
+        else:
+            blue_detected = False
+            motion_end_time = None
+        
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
     
-    cv2.imshow("Finger Detection", frame)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
+    cap.release()
+    cv2.destroyAllWindows()
 
-cap.release()
-cv2.destroyAllWindows()
+detect_blue()
