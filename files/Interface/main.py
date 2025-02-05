@@ -1,10 +1,8 @@
 import customtkinter as ctk
 from tkinter import ttk
 from PIL import Image, ImageTk
-import sys
+import subprocess
 import os
-sys.path.append(os.path.join(os.path.dirname(__file__), '../HardwareDevelopment'))
-import test
 
 class Beverage:
     def __init__(self, name, info_text, ingredients, image_path=None):
@@ -153,7 +151,6 @@ def mix_button_clicked(beverages):
     global error_label
     selected_beverages = [beverage for beverage in beverages if beverage.checked]
     selected_count = len(selected_beverages)
-    
     if error_label:
         error_label.destroy()
     if selected_count == 0:
@@ -166,18 +163,22 @@ def mix_button_clicked(beverages):
                                    font=("Arial", 18), text_color="#FF0000",  
                                    fg_color="#555555", corner_radius=10)
         error_label.place(relx=0.5, rely=0.98, anchor="n")
+
     else:
-        selected_names = [beverage.name.split(" /")[0] for beverage in selected_beverages]  # Entfernt "/ml"
+        selected_names = [beverage.name.split(" /")[0] for beverage in selected_beverages]
+        if "Cola" in selected_names and "Fanta" in selected_names:
+            selected_names = ["Spezi"]
         print(f"Ausgewählte Getränke: {selected_names}")
         
         result_tuple = tuple(selected_names)
         print(f"Resultat-Tuple: {result_tuple}")
         
-        if len(result_tuple) == 2:
-            test.run("Spezi")
-        else:
-            test.run(result_tuple)
-        
+        os.chdir(os.path.join(os.getcwd(), '..', 'HardwareDevelopment'))
+        result = subprocess.run(['python', 'test.py', ','.join(result_tuple)], capture_output=True, text=True)
+
+        print(f"Rückgabewert: {result.returncode}")
+        print(f"Standardoutput: {result.stdout}")
+        print(f"Fehlerausgabe: {result.stderr}")
 
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("blue")
