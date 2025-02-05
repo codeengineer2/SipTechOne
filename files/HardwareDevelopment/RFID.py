@@ -1,4 +1,3 @@
-import main
+import test
 
-main.run_drink("Mezzo")
- 
+test.run("Mezzo")
