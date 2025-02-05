@@ -24,7 +24,7 @@ def run(parameter):
         sleep(zeiteinzeln)
         relay2.off()
         print("Fanta stoppt")
-    elif parameter == "Mezzo":
+    elif parameter == "Spezi":
         relay1.on()
         relay2.on()
         print("Mezzo läuft - Beide Relays an")
