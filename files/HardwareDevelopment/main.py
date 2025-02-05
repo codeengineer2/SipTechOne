@@ -2,7 +2,7 @@ import json
 from gpiozero import OutputDevice
 from time import sleep
 
-with open("drinks_config.json", "r") as file:
+with open("drinkstime.json", "r") as file:
     config = json.load(file)
 
 drinks = config["drinks"]
@@ -34,5 +34,3 @@ def run_drink(drink_name):
         print(f"Pumpe an Pin {pumps[0]['pin']} stoppt.")
         pump2.off()
         print(f"Pumpe an Pin {pumps[1]['pin']} stoppt.")
-
-
