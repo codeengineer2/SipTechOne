@@ -1,6 +1,8 @@
 import customtkinter as ctk
 from tkinter import ttk
 from PIL import Image, ImageTk
+import subprocess
+import os
 
 class Beverage:
     def __init__(self, name, info_text, ingredients, image_path=None):
@@ -40,8 +42,8 @@ def on_button_click():
     error_label = None
     for widget in root.winfo_children():
         widget.destroy()
-    beverages_label = ctk.CTkLabel(root, text="Getränke", font=("Arial", 30))
-    beverages_label.place(relx=0.5, rely=0.08, anchor="n")
+    beverages_label = ctk.CTkLabel(root, text="Getränke", font=("Arial", 40))
+    beverages_label.place(relx=0.5, rely=0.05, anchor="n")
     frame = ctk.CTkFrame(root)
     frame.place(relx=0.5, rely=0.18, anchor="n")
     beverage1 = Beverage("Cola / 50ml", "A classic cola drink", {
@@ -75,20 +77,25 @@ def on_button_click():
             image_label = ctk.CTkLabel(object_frame, text="Bild konnte nicht geladen werden")
         image_label.image = beverage.image
         image_label.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
-        name_label = ctk.CTkLabel(object_frame, text=beverage.name, font=("Arial", 14))
+        name_label = ctk.CTkLabel(object_frame, text=beverage.name, font=("Arial", 18))
         name_label.grid(row=1, column=0, padx=10, pady=10)
         button_frame = ctk.CTkFrame(object_frame, fg_color="transparent")
         button_frame.grid(row=2, column=0, pady=10)
-        info_button = ctk.CTkButton(button_frame, text="i", font=("Arial", 12, "bold"), width=40, height=40,
-                                    corner_radius=20, fg_color="#6A0DAD", hover_color="#620A80",
-                                    command=lambda b=beverage: info_button_clicked(b))
+        info_button = ctk.CTkButton(button_frame, text="i", font=("Arial", 18, "bold"),
+                            width=55, height=55,
+                            corner_radius=27,
+                            fg_color="#6A0DAD", hover_color="#620A80",
+                            command=lambda b=beverage: info_button_clicked(b))
+
         info_button.grid(row=0, column=0)
         bind_selection(object_frame, beverage, object_frame)
+
     back_button = ctk.CTkButton(root, text="Zurück", font=("Arial", 18), width=180, height=60,
-                                command=back_to_initial)
+                                command=back_to_initial, fg_color="#6A0DAD", hover_color="#620A80")
     back_button.place(relx=0.05, rely=0.05, anchor="nw")
+
     mix_button = ctk.CTkButton(root, text="Mischen", font=("Arial", 18), width=180, height=60,
-                               command=lambda: mix_button_clicked(beverages))
+                               command=lambda: mix_button_clicked(beverages), fg_color="#6A0DAD", hover_color="#620A80")
     mix_button.place(relx=0.5, rely=0.91, anchor="center")
 
 def grid_element_clicked(beverage, object_frame):
@@ -97,37 +104,47 @@ def grid_element_clicked(beverage, object_frame):
     beverage.checked = not beverage.checked
     if beverage.checked:
         object_frame.configure(fg_color=HIGHLIGHT_COLOR)
-    else:
+    else: 
         object_frame.configure(fg_color=DEFAULT_COLOR)
     print(f"{beverage.name} ausgewählt: {beverage.checked}")
 
 def info_button_clicked(beverage):
     info_window = ctk.CTkToplevel(root)
-    info_window.geometry("400x400")
-    info_window.title(f"Info - {beverage.name}")
+    info_window.geometry("500x500")
+    info_window.title(f"Info - Cola")
     info_window.resizable(False, False)
     info_window.grab_set()
-    info_label = ctk.CTkLabel(info_window, text=f"{beverage.name}: {beverage.info_text}", font=("Arial", 14))
-    info_label.pack(padx=20, pady=10)
+
+    cola_label = ctk.CTkLabel(info_window, text="Cola", font=("Arial", 22, "bold"))
+    cola_label.pack(padx=20, pady=10)
+
     table_frame = ctk.CTkFrame(info_window)
     table_frame.pack(pady=10, padx=20, fill="both", expand=True)
+
     treeview = ttk.Treeview(table_frame, columns=("Inhaltsstoff", "Menge (pro 100ml)"), show="headings")
     treeview.heading("Inhaltsstoff", text="Inhaltsstoff")
-    treeview.heading("Menge (pro 100ml)", text="Menge (pro 100ml)")
+    treeview.heading("Menge (pro 100ml)", text="Menge (pro 100ml)"))
+
     for i, (ingredient, value) in enumerate(beverage.ingredients.items()):
         treeview.insert("", "end", values=(ingredient, value))
+    
+    treeview.tag_configure("font", font=("Arial", 14))
     treeview.pack(fill="both", expand=True)
-    close_button = ctk.CTkButton(info_window, text="Schließen", font=("Arial", 14),
+
+    close_button = ctk.CTkButton(info_window, text="Schließen", font=("Arial", 16),
                                  command=info_window.destroy, fg_color="#6A0DAD",
-                                 hover_color="#620A80", width=160, height=40, corner_radius=20)
+                                 hover_color="#620A80", width=180, height=50, corner_radius=10)
     close_button.pack(pady=10)
 
 def back_to_initial():
     for widget in root.winfo_children():
         widget.destroy()
-    content_text = ctk.CTkLabel(root, text="Willkommen zu Sip Tech One", font=("Arial", 20))
+        
+    content_text = ctk.CTkLabel(root, text="Willkommen zu Sip Tech One", font=("Arial", 30))
     content_text.place(relx=0.5, rely=0.3, anchor="center")
-    button = ctk.CTkButton(root, text="Getränk erstellen", font=("Arial", 40), width=350, height=80, command=on_button_click)
+
+    button = ctk.CTkButton(root, text="Getränk erstellen", font=("Arial", 40), width=350, height=80,
+                           fg_color="#6A0DAD", hover_color="#620A80", command=on_button_click)
     button.place(relx=0.5, rely=0.5, anchor="center")
 
 def mix_button_clicked(beverages):
@@ -138,16 +155,28 @@ def mix_button_clicked(beverages):
         error_label.destroy()
     if selected_count == 0:
         error_label = ctk.CTkLabel(root, text="Es muss mindestens 1 Getränk ausgewählt werden!",
-                                   font=("Arial", 14), text_color="#FF0000",
+                                   font=("Arial", 18), text_color="#FF0000",  
                                    fg_color="#555555", corner_radius=10)
         error_label.place(relx=0.5, rely=0.78, anchor="n")
     elif selected_count > 2:
         error_label = ctk.CTkLabel(root, text="Es können nicht mehr als 2 Getränke ausgewählt werden!",
-                                   font=("Arial", 14), text_color="#FF0000",
+                                   font=("Arial", 18), text_color="#FF0000",  
                                    fg_color="#555555", corner_radius=10)
-        error_label.place(relx=0.5, rely=0.78, anchor="n")
+        error_label.place(relx=0.5, rely=1, anchor="n")
+
     else:
-        print(tuple(str(beverage) for beverage in selected_beverages))
+        selected_names = [beverage.name.split(" /")[0] for beverage in selected_beverages]
+        print(f"Ausgewählte Getränke: {selected_names}")
+        
+        result_tuple = tuple(selected_names)
+        print(f"Resultat-Tuple: {result_tuple}")
+        
+        os.chdir(os.path.join(os.getcwd(), '..', 'HardwareDevelopment'))
+        result = subprocess.run(['python', 'main.py', ','.join(result_tuple)], capture_output=True, text=True)
+
+        print(f"Rückgabewert: {result.returncode}")
+        print(f"Standardoutput: {result.stdout}")
+        print(f"Fehlerausgabe: {result.stderr}")
 
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("blue")

@@ -34,5 +34,3 @@ def run_drink(drink_name):
         print(f"Pumpe an Pin {pumps[0]['pin']} stoppt.")
         pump2.off()
         print(f"Pumpe an Pin {pumps[1]['pin']} stoppt.")
-
-
