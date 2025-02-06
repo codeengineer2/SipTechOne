@@ -21,7 +21,7 @@ class App(ctk.CTk):
         x = (screen_width - self.window_width) // 2
         y = (screen_height - self.window_height) // 2
         self.geometry(f"{self.window_width}x{self.window_height}+{x}+{y}")
-        self.title("SIP Tech One GUI")
+        self.title("SIP GUI")
         self.selected_drinks = set()
         self.buttons = []
         self.create_initial_view()
@@ -29,8 +29,8 @@ class App(ctk.CTk):
     def create_initial_view(self):
         for widget in self.winfo_children():
             widget.destroy()
-        header_label = ctk.CTkLabel(self, text="Willkommen bei SIP Tech One!", font=("Arial", 28, "bold"))
-        header_label.pack(pady=(50, 20))
+        header_label = ctk.CTkLabel(self, text="Willkommen bei Sip Tech One!", font=("Arial", 28, "bold"))
+        header_label.pack(pady=(100, 20))
         create_button = ctk.CTkButton(
             self,
             text="Getränk erstellen",
@@ -42,15 +42,15 @@ class App(ctk.CTk):
             height=60,
             cursor="hand2",
             command=self.show_drink_selection,
-            hover_color="#d17cd6"
+            hover_color="orchid"
         )
         create_button.pack(pady=20)
 
     def show_drink_selection(self):
-        for widget in self.winfo_children():
-            widget.destroy()
         self.selected_drinks.clear()
         self.buttons.clear()
+        for widget in self.winfo_children():
+            widget.destroy()
         header_frame = ctk.CTkFrame(self, height=100, fg_color="#F0E6F6")
         header_frame.pack(fill="x", pady=(10, 20), padx=20)
         back_button = ctk.CTkButton(
@@ -63,8 +63,8 @@ class App(ctk.CTk):
             width=150,
             height=50,
             cursor="hand2",
-            command=self.create_initial_view,
-            hover_color="#d17cd6"
+            command=self.go_back,
+            hover_color="orchid"
         )
         back_button.place(relx=0.02, rely=0.5, anchor="w")
         header_label = ctk.CTkLabel(
@@ -91,20 +91,18 @@ class App(ctk.CTk):
                 text="",
                 image=drink_image,
                 fg_color="#FFFFFF",
-                hover_color="#C5A3FF",
                 corner_radius=15,
                 width=260,
                 height=260,
-                cursor="hand2"
+                cursor="hand2",
+                hover_color="#FFFFFF"
             )
             drink_button.selected = False
             drink_button.configure(command=lambda b=drink_button, d=getraenke[index]: self.toggle_drink(b, d))
             drink_button.grid(row=row, column=col, padx=20, pady=20)
             self.buttons.append(drink_button)
-
         for col in range(columns):
             grid_frame.grid_columnconfigure(col, weight=1)
-
         mix_button = ctk.CTkButton(
             self,
             text="Mischen",
@@ -116,18 +114,22 @@ class App(ctk.CTk):
             height=60,
             cursor="hand2",
             command=self.mix_drinks,
-            hover_color="#d17cd6"
+            hover_color="orchid"
         )
         mix_button.pack(pady=20)
         self.buttons.append(mix_button)
 
+    def go_back(self):
+        self.selected_drinks.clear()
+        self.create_initial_view()
+
     def toggle_drink(self, button, getraenk):
         if not button.selected:
-            button.configure(fg_color="#EFA94A")
+            button.configure(fg_color="#CE93D8", hover_color="#CE93D8")
             button.selected = True
             self.selected_drinks.add(getraenk.name)
         else:
-            button.configure(fg_color="#FFFFFF")
+            button.configure(fg_color="#FFFFFF", hover_color="#FFFFFF")
             button.selected = False
             self.selected_drinks.discard(getraenk.name)
 
@@ -150,11 +152,11 @@ class App(ctk.CTk):
     def run_external_process(self, result):
         try:
             value = AID.detect_blue()
-            if(value == 1):
+            if value == 1:
                 print('Yeah')
                 HDT.run(result)
         except Exception as e:
-            print(f"Fehler beim Ausführen von hello.run(): {e}")
+            print(f"Fehler beim Ausführen von HDT.run(): {e}")
         self.show_success_screen()
 
     def show_success_screen(self):
@@ -178,7 +180,7 @@ class App(ctk.CTk):
             height=60,
             cursor="hand2",
             command=self.create_initial_view,
-            hover_color="#d17cd6"
+            hover_color="orchid"
         )
         success_button.pack(pady=20)
 

@@ -25,8 +25,8 @@ def detect_blue():
         blue_percentage = (np.sum(mask > 0) / (frame.shape[0] * frame.shape[1])) * 100
         cv2.putText(frame, f'Blau: {blue_percentage:.2f}%', (10, 50),
                     cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-        cv2.imshow('Frame', frame)
-        cv2.imshow('Maske', mask)
+        #cv2.imshow('Frame', frame)
+        #cv2.imshow('Maske', mask)
         
         if blue_percentage >= 40:
             if motion_detected:

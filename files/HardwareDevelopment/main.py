@@ -8,10 +8,9 @@ relay1.off()
 relay2.off()
 
 
-
 def run(parameter):
-    zeiteinzeln = 20 # 65
-    zeitgesamt = 10 # 33
+    zeiteinzeln = 50 # 65
+    zeitgesamt = 30 # 33
 
     if parameter == "Cola":
         relay1.on()
@@ -33,5 +32,3 @@ def run(parameter):
         relay1.off()
         relay2.off()
         print("Spezi stoppt - beide beendet")
-
-
