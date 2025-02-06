@@ -46,4 +46,3 @@ def detect_blue():
             
     cap.release()
     cv2.destroyAllWindows()
-detect_blue()
