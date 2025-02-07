@@ -9,7 +9,7 @@ relay2.on()
 
 
 def run(parameter):
-    zeiteinzeln = 100 # 65
+    zeiteinzeln = 90 # 65
     zeitgesamt = 45 # 33
 
     if parameter == "Cola":
