@@ -25,6 +25,7 @@ def detect_blue():
         blue_percentage = (np.sum(mask > 0) / (frame.shape[0] * frame.shape[1])) * 100
         cv2.putText(frame, f'Blau: {blue_percentage:.2f}%', (10, 50),
                     cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+        
         #cv2.imshow('Frame', frame)
         #cv2.imshow('Maske', mask)
         
@@ -34,7 +35,7 @@ def detect_blue():
             else:
                 if timer_start is None:
                     timer_start = time.time()
-                elif time.time() - timer_start >= 3:
+                elif time.time() - timer_start >= 2:
                     print("end")
                     return 1
                     timer_start = None
