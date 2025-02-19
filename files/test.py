@@ -14,8 +14,8 @@ class Getraenk:
 class App(ctk.CTk):
     def __init__(self):
         super().__init__()
-        self.window_width = 1800 
-        self.window_height = 900
+        self.window_width = 2000 
+        self.window_height = 1000
         screen_width = self.winfo_screenwidth()
         screen_height = self.winfo_screenheight()
         x = (screen_width - self.window_width) // 2
@@ -29,39 +29,39 @@ class App(ctk.CTk):
     def create_initial_view(self):
         for widget in self.winfo_children():
             widget.destroy()
-        header_label = ctk.CTkLabel(self, text="Willkommen bei Sip Tech One!", font=("Arial", 34, "bold"))
-        header_label.pack(pady=(120, 30))
+        header_label = ctk.CTkLabel(self, text="Willkommen bei Sip Tech One!", font=("Arial", 48, "bold"))
+        header_label.pack(pady=(150, 40))
         create_button = ctk.CTkButton(
             self,
             text="Getränk erstellen",
             fg_color="orchid",
             text_color="white",
-            corner_radius=20,
-            font=("Arial", 24, "bold"),
-            width=300,
-            height=80,
+            corner_radius=30,
+            font=("Arial", 32, "bold"),
+            width=350,
+            height=100,
             cursor="hand2",
             command=self.show_drink_selection,
             hover_color="orchid"
         )
-        create_button.pack(pady=30)
+        create_button.pack(pady=40)
 
     def show_drink_selection(self):
         self.selected_drinks.clear()
         self.buttons.clear()
         for widget in self.winfo_children():
             widget.destroy()
-        header_frame = ctk.CTkFrame(self, height=120, fg_color="#F0E6F6")
-        header_frame.pack(fill="x", pady=(20, 30), padx=30)
+        header_frame = ctk.CTkFrame(self, height=150, fg_color="#F0E6F6")
+        header_frame.pack(fill="x", pady=(20, 40), padx=40)
         back_button = ctk.CTkButton(
             header_frame,
             text="Zurück",
             fg_color="orchid",
             text_color="white",
-            corner_radius=20,
-            font=("Arial", 20, "bold"),
-            width=180,
-            height=60,
+            corner_radius=30,
+            font=("Arial", 28, "bold"),
+            width=200,
+            height=80,
             cursor="hand2",
             command=self.go_back,
             hover_color="orchid"
@@ -70,12 +70,12 @@ class App(ctk.CTk):
         header_label = ctk.CTkLabel(
             header_frame,
             text="Wähle ein Getränk",
-            font=("Arial", 38, "bold"),
+            font=("Arial", 48, "bold"),
             text_color="black"
         )
         header_label.place(relx=0.5, rely=0.5, anchor="center")
         grid_frame = ctk.CTkFrame(self, fg_color="#E8DFF5")
-        grid_frame.pack(pady=30, padx=30)
+        grid_frame.pack(pady=40, padx=40)
         getraenke = [
             Getraenk("Fanta", "Interface/drinks/apfel.png"),
             Getraenk("Cola", "Interface/drinks/wasser.png")
@@ -84,22 +84,22 @@ class App(ctk.CTk):
         for index, getraenk in enumerate(getraenke):
             row = index // columns
             col = index % columns
-            pil_image = Image.open(getraenk.image_path)
-            drink_image = ctk.CTkImage(light_image=pil_image, size=(280, 280))
+            pil_image = Image.open(getraenke[index].image_path)
+            drink_image = ctk.CTkImage(light_image=pil_image, size=(340, 340))
             drink_button = ctk.CTkButton(
                 grid_frame,
                 text="",
                 image=drink_image,
                 fg_color="#FFFFFF",
                 corner_radius=20,
-                width=280,
-                height=280,
+                width=360,
+                height=360,
                 cursor="hand2",
                 hover_color="#FFFFFF"
             )
             drink_button.selected = False
-            drink_button.configure(command=lambda b=drink_button, d=getraenk: self.toggle_drink(b, d))
-            drink_button.grid(row=row, column=col, padx=30, pady=30)
+            drink_button.configure(command=lambda b=drink_button, d=getraenke[index]: self.toggle_drink(b, d))
+            drink_button.grid(row=row, column=col, padx=40, pady=40)
             self.buttons.append(drink_button)
         for col in range(columns):
             grid_frame.grid_columnconfigure(col, weight=1)
@@ -108,15 +108,15 @@ class App(ctk.CTk):
             text="Mischen",
             fg_color="orchid",
             text_color="white",
-            corner_radius=20,
-            font=("Arial", 24, "bold"),
-            width=300,
-            height=80,
+            corner_radius=30,
+            font=("Arial", 32, "bold"),
+            width=350,
+            height=100,
             cursor="hand2",
             command=self.mix_drinks,
             hover_color="orchid"
         )
-        mix_button.pack(pady=30)
+        mix_button.pack(pady=40)
         self.buttons.append(mix_button)
 
     def go_back(self):
@@ -136,7 +136,14 @@ class App(ctk.CTk):
     def mix_drinks(self):
         if not self.selected_drinks:
             return
-        result = " + ".join(self.selected_drinks) if len(self.selected_drinks) > 1 else list(self.selected_drinks)[0]
+        if self.selected_drinks == {"Fanta"}:
+            result = "Fanta"
+        elif self.selected_drinks == {"Cola"}:
+            result = "Cola"
+        elif self.selected_drinks == {"Fanta", "Cola"}:
+            result = "Spezi"
+        else:
+            result = "Unbekannt"
         print(result)
         for btn in self.buttons:
             btn.configure(state="disabled")
@@ -158,24 +165,24 @@ class App(ctk.CTk):
         success_label = ctk.CTkLabel(
             self,
             text="Mischung erfolgreich!",
-            font=("Arial", 38, "bold"),
+            font=("Arial", 48, "bold"),
             text_color="black"
         )
-        success_label.pack(pady=(120, 30))
+        success_label.pack(pady=(150, 40))
         success_button = ctk.CTkButton(
             self,
             text="Erfolg",
             fg_color="orchid",
             text_color="white",
-            corner_radius=20,
-            font=("Arial", 24, "bold"),
-            width=300,
-            height=80,
+            corner_radius=30,
+            font=("Arial", 32, "bold"),
+            width=350,
+            height=100,
             cursor="hand2",
             command=self.create_initial_view,
             hover_color="orchid"
         )
-        success_button.pack(pady=30)
+        success_button.pack(pady=40)
 
 if __name__ == "__main__":
     app = App()
