@@ -77,8 +77,8 @@ class App(ctk.CTk):
         grid_frame = ctk.CTkFrame(self, fg_color="#E8DFF5")
         grid_frame.pack(pady=20, padx=20)
         getraenke = [
-            Getraenk("Fanta", "Interface/drinks/Fanta.png"),
-            Getraenk("Cola", "Interface/drinks/Cola.png")
+            Getraenk("Fanta", "Interface/drinks/apfel.png"),
+            Getraenk("Cola", "Interface/drinks/wasser.png")
         ]
         columns = 2
         for index, getraenk in enumerate(getraenke):
